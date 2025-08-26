@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistema Offline/Online</title>
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#007BFF" />
+  <style>
+    body { font-family: Arial, sans-serif; margin: 10px; background: #f5f5f5; }
+    h1 { text-align: center; font-size: 1.5rem; }
+    form, .busca {
+      background: white; padding: 15px; border-radius: 10px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2); margin-bottom: 20px;
+      max-width: 600px; margin-left: auto; margin-right: auto;
+    }
+    input, button {
+      width: 100%; padding: 12px; margin-bottom: 10px;
+      border-radius: 8px; border: 1px solid #ccc; font-size: 1rem;
+    }
+    button { background: #007BFF; color: white; border: none; cursor: pointer; }
+    button:hover { background: #0056b3; }
+    .card {
+      background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      padding: 15px; margin-bottom: 10px;
+      max-width: 600px; margin-left: auto; margin-right: auto;
+    }
+    .card strong { display: inline-block; min-width: 90px; }
+    .botoes { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 5px; }
+    .btn-excluir { background: #dc3545; color: #fff; }
+    .btn-excluir:hover { background: #a71d2a; }
+    .btn-editar { background: #28a745; color: #fff; }
+    .btn-editar:hover { background: #1e7e34; }
+    @media (max-width: 480px) {
+      h1 { font-size: 1.2rem; }
+      input, button { font-size: 0.9rem; padding: 10px; }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Sistema Offline/Online</h1>
+
+  <form id="formCadastro">
+    <h2 id="tituloForm">Cadastrar Dados</h2>
+    <input type="text" id="nome" placeholder="Nome" required />
+    <input type="text" id="cod1" placeholder="Código 1" required />
+    <input type="text" id="cod2" placeholder="Código 2" required />
+    <input type="text" id="ref" placeholder="Referência" required />
+    <button type="submit">Salvar</button>
+  </form>
+
+  <div class="busca">
+    <h2>Consultar</h2>
+    <input type="text" id="busca" placeholder="Digite nome, código ou ref..." />
+    <button type="button" onclick="listarTodos()">Listar Todos</button>
+    <button type="button" onclick="sincronizar()">🔄 Sincronizar</button>
+  </div>
+
+  <div id="resultado"></div>
+
+  <!-- Firebase + Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore.js";
+
+    // 🔧 Configure aqui com os dados do seu projeto Firebase
+    const firebaseConfig = {
+      apiKey: "SUA_API_KEY",
+      authDomain: "SEU_PROJETO.firebaseapp.com",
+      projectId: "SEU_PROJETO",
+      storageBucket: "SEU_PROJETO.appspot.com",
+      messagingSenderId: "SEU_SENDER_ID",
+      appId: "SUA_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // ===== LÓGICA OFFLINE =====
+    let dados = JSON.parse(localStorage.getItem("dados")) || [];
+    let editIndex = null;
+
+    // Cadastro
+    document.getElementById("formCadastro").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const novo = {
+        nome: document.getElementById("nome").value,
+        cod1: document.getElementById("cod1").value,
+        cod2: document.getElementById("cod2").value,
+        ref: document.getElementById("ref").value,
+        synced: false
+      };
+
+      if (editIndex === null) {
+        dados.push(novo);
+      } else {
+        dados[editIndex] = novo;
+        editIndex = null;
+        document.getElementById("tituloForm").innerText = "Cadastrar Dados";
+      }
+
+      localStorage.setItem("dados", JSON.stringify(dados));
+      alert("Dados salvos localmente!");
+      this.reset();
+      listarTodos();
+    });
+
+    // Listar todos
+    window.listarTodos = function() {
+      document.getElementById("busca").value = "";
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = "";
+      dados.forEach((d, i) => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <strong>Nome:</strong> ${d.nome}<br>
+          <strong>Código 1:</strong> ${d.cod1}<br>
+          <strong>Código 2:</strong> ${d.cod2}<br>
+          <strong>Ref:</strong> ${d.ref}<br>
+          <small>Status: ${d.synced ? "✅ Sincronizado" : "⏳ Pendente"}</small>
+          <div class="botoes">
+            <button class="btn-editar" onclick="editar(${i})">Editar</button>
+            <button class="btn-excluir" onclick="excluir(${i})">Excluir</button>
+          </div>
+        `;
+        resultadoDiv.appendChild(card);
+      });
+    };
+
+    // Buscar
+    document.getElementById("busca").addEventListener("keyup", function() {
+      const termo = this.value.trim();
+      const resultadoDiv = document.getElementById("resultado");
+      resultadoDiv.innerHTML = "";
+      if (termo === "") return;
+      const encontrados = dados.filter(d =>
+        d.nome.toLowerCase().includes(termo.toLowerCase()) ||
+        d.cod1.includes(termo) ||
+        d.cod2.includes(termo) ||
+        d.ref.toLowerCase().includes(termo.toLowerCase())
+      );
+      if(encontrados.length === 0){
+        resultadoDiv.innerHTML = "<p>Nenhum resultado encontrado.</p>";
+        return;
+      }
+      encontrados.forEach(d => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <strong>Nome:</strong> ${d.nome}<br>
+          <strong>Código 1:</strong> ${d.cod1}<br>
+          <strong>Código 2:</strong> ${d.cod2}<br>
+          <strong>Ref:</strong> ${d.ref}<br>
+          <small>Status: ${d.synced ? "✅ Sincronizado" : "⏳ Pendente"}</small>
+        `;
+        resultadoDiv.appendChild(card);
+      });
+    });
+
+    // Editar
+    window.editar = function(index) {
+      const item = dados[index];
+      document.getElementById("nome").value = item.nome;
+      document.getElementById("cod1").value = item.cod1;
+      document.getElementById("cod2").value = item.cod2;
+      document.getElementById("ref").value = item.ref;
+      editIndex = index;
+      document.getElementById("tituloForm").innerText = "Editar Dados";
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    };
+
+    // Excluir
+    window.excluir = function(index) {
+      if (confirm("Tem certeza que deseja excluir?")) {
+        dados.splice(index, 1);
+        localStorage.setItem("dados", JSON.stringify(dados));
+        listarTodos();
+      }
+    };
+
+    // 🔄 Sincronizar com Firestore
+    window.sincronizar = async function() {
+      for (let i = 0; i < dados.length; i++) {
+        if (!dados[i].synced) {
+          try {
+            await addDoc(collection(db, "cadastros"), {
+              nome: dados[i].nome,
+              cod1: dados[i].cod1,
+              cod2: dados[i].cod2,
+              ref: dados[i].ref,
+              timestamp: new Date()
+            });
+            dados[i].synced = true;
+          } catch (e) {
+            console.error("Erro ao sincronizar:", e);
+            alert("Falha ao sincronizar alguns registros. Veja o console.");
+          }
+        }
+      }
+      localStorage.setItem("dados", JSON.stringify(dados));
+      alert("Sincronização concluída!");
+      listarTodos();
+    };
+
+    // Registrar service worker (PWA)
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("sw.js")
+          .then(() => console.log("Service Worker registrado!"))
+          .catch(err => console.error("Erro SW:", err));
+      });
+    }
+
+    // Carregar inicial
+    listarTodos();
+  </script>
+</body>
+</html>
