@@ -13,18 +13,20 @@
   button, .card { padding: 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 8px; transition: 0.2s; text-align: center; }
   button { background-color: #2196f3; color: white; }
   button:hover, .card:hover { background-color: #0b7dda; color: #fff; }
-  .card { background-color: #fff; color: #333; width: 150px; height: 100px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+  .card { background-color: green; color: #333; width: 100%px; height: 100px; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
 </style>
 </head>
 <body>
 
 <!-- Slide 0: Painel Inicial -->
 <div id="slide0" class="slide active">
-  <h1>Painel Administrativo</h1>
-  <div class="buttons">
-    <button onclick="goToSlide(1)">PITIMBU DA SORTE</button>
-    <button onclick="goToSlide(2)">TIMONHA DA SORTE</button>
-    <button onclick="goToSlide(3)">DEZENA DA SORTE</button>
+  <h1>TIMONHA DA SORTE</h1>
+  <div class="cards">
+   
+    <div class="card" onclick="window.location.href='caixa.html'">Caixa</div>
+    <div class="card" onclick="window.location.href='relatorio.html'">Relatório Diário</div>
+    <div class="card" onclick="window.location.href='relatoriofinal.html'">Relatório Final</div>
+    <div class="card" onclick="goToSlide(0)">Sair</div>
   </div>
 </div>
 
@@ -73,3 +75,4 @@ function goToSlide(n) {
 
 </body>
 </html>
+
