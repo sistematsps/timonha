@@ -22,9 +22,14 @@
 <div id="slide0" class="slide active">
   <h1>Painel Administrativo</h1>
   <div class="buttons">
-    <button onclick="goToSlide(1)">PITIMBU DA SORTE</button>
-    <button onclick="goToSlide(2)">TIMONHA DA SORTE</button>
-    <button onclick="goToSlide(3)">DEZENA DA SORTE</button>
+    <div class="cards">
+    <div class="card" onclick="window.location.href='cadastro.html'">Cadastro de Vendedor</div>
+    <div class="card" onclick="window.location.href='caixa.html'">Caixa</div>
+    <div class="card" onclick="window.location.href='despesas.html'">Despesas</div>
+    <div class="card" onclick="window.location.href='lancamentos.html'">Lançamentos</div>
+    <div class="card" onclick="window.location.href='relatorio.html'">Relatório Diário</div>
+    <div class="card" onclick="window.location.href='relatoriofinal.html'">Relatório Final</div>
+    <div class="card" onclick="goToSlide(0)">Sair</div>
   </div>
 </div>
 
@@ -80,4 +85,5 @@ function goToSlide(n) {
 
 </body>
 </html>
+
 
