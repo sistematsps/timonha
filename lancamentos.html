@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Lançamentos Diretos - Firestore</title>
+  <title>Lançamentos Diretos</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: Arial, sans-serif; padding: 20px; background-color: #f8f8f8; }
@@ -43,7 +43,7 @@
   </style>
 </head>
 <body>
-  <h1>Lançamentos Diretos nos Vendedores</h1>
+  <h1>DEVEDORES TIMONHA DA SORTE </h1>
 
   <div id="container"></div>
   <div id="msg"></div>
@@ -54,13 +54,15 @@ import { getFirestore, collection, getDocs, updateDoc, doc } from "https://www.g
 
 // ===== CONFIGURAÇÃO FIREBASE =====
 const firebaseConfig = {
-  apiKey: "AIzaSyD8IxOX_0e6T7DUzGf1DlPOHLNCq5zCK2M",
-  authDomain: "pitimbu-da-sorte-80aa6.firebaseapp.com",
-  projectId: "pitimbu-da-sorte-80aa6",
-  storageBucket: "pitimbu-da-sorte-80aa6.firebasestorage.app",
-  messagingSenderId: "365898285373",
-  appId: "1:365898285373:web:2ce4e344f1e9774c068554"
+  apiKey: "AIzaSyD91WcNkb6Y4bZIVJdA75m4HlpId7HwbAk",
+  authDomain: "pitimbu-da-sorte.firebaseapp.com",
+  projectId: "pitimbu-da-sorte",
+  storageBucket: "pitimbu-da-sorte.firebasestorage.app",
+  messagingSenderId: "689037113918",
+  appId: "1:689037113918:web:334207c5b44f37bb992f6f",
+  measurementId: "G-3WKL6THK72"
 };
+
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -157,4 +159,5 @@ carregarVendedores();
 </script>
 </body>
 </html>
+
 
