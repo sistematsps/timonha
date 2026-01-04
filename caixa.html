@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Caixa - Timonha da Sorte</title>
+<title>Caixa - Pitimbu da Sorte</title>
 <style>
 * { box-sizing: border-box; font-family: Arial, sans-serif; }
 body { padding: 20px; background: #f5f5f5; }
-h1, h2 { color: green; }
+h1, h2 { color: red; }
 input, button, select { padding: 8px; margin: 5px; }
-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: #fff; }
+table { width: 100%; border-collapse: collapse; margin-top: 10px; background: white; }
 th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
 th { background: #ffcccc; }
 .total-box { margin: 20px 0; padding: 15px; background: #fff3f3; border: 1px solid #b30000; }
@@ -20,7 +20,7 @@ button { cursor:pointer; }
 </head>
 <body>
 
-<h1>CAIXA TIMONHA DA SORTE</h1>
+<h1>PITIMBU DA SORTE</h1>
 
 <div class="total-box totais">
   <span>SALDO ANTERIOR: R$ <span id="saldoAnterior">0.00</span></span>
@@ -85,7 +85,7 @@ button { cursor:pointer; }
 <h2>Partilha de Recursos</h2>
 <div class="total-box">
 <p>BENEDITO JUNIOR: R$ <span id="benedito">0.00</span></p>
-<p>TATA FORTUNA: R$ <span id="tata">0.00</span></p>
+<p>JOSE ROBERTO: R$ <span id="jose">0.00</span></p>
 <p>PEDRO CARVALHO: R$ <span id="pedro">0.00</span></p>
 </div>
 
@@ -96,14 +96,14 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/fireba
 import { getFirestore, collection, getDocs, addDoc, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
 const firebaseConfig = {
-const firebaseConfig = {
-  apiKey: "AIzaSyDtFVa120k4xnggOHibWOs61Jn-hJaSsdU",
-  authDomain: "timonha-b36d6.firebaseapp.com",
-  projectId: "timonha-b36d6",
-  storageBucket: "timonha-b36d6.firebasestorage.app",
-  messagingSenderId: "59864953764",
-  appId: "1:59864953764:web:9d44c30ff09b00a0f44731"
+  apiKey: "AIzaSyBrHB8Defu0DrkV8POU4lAuAxCal6fqHM4",
+  authDomain: "pitimbu-a09e3.firebaseapp.com",
+  projectId: "pitimbu-a09e3",
+  storageBucket: "pitimbu-a09e3.firebasestorage.app",
+  messagingSenderId: "956873424564",
+  appId: "1:956873424564:web:583c8405d288883d71e1e1"
 };
+
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
@@ -195,10 +195,10 @@ async function carregarCaixa(inicio='0000-00-00', fim='9999-12-31') {
   document.getElementById('saldoFinal').textContent = formatar(saldoFinal);
 
   // ===== Partilha =====
-  document.getElementById('benedito').textContent=formatar(saldoFinal*0.15);
-  document.getElementById('tata').textContent=formatar(saldoFinal*0.15);
-  document.getElementById('pedro').textContent=formatar(saldoFinal*0.7);
-  }
+  document.getElementById('benedito').textContent=formatar(saldoFinal*0.25);
+  document.getElementById('jose').textContent=formatar(saldoFinal*0.25);
+  document.getElementById('pedro').textContent=formatar(saldoFinal*0.5);
+}
 
 // ===== Adicionar nova receita =====
 document.getElementById("btnSalvarReceita").addEventListener("click", async ()=>{
@@ -255,12 +255,6 @@ window.onload = ()=>{ carregarCaixa(); }
 
 </body>
 </html>
-
-
-
-
-
-
 
 
 
